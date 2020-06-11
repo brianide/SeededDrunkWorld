@@ -12,7 +12,7 @@ namespace SeededDrunkWorld
         public override string Name => "Seeded Drunk World";
         public override string Description => "Allows all world seeds to generate drunk";
         public override string Author => "gigabarn";
-        public override Version Version => new Version(0, 1);
+        public override Version Version => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
         public SeededDrunkWorldPlugin(Main game) : base(game)
         {
