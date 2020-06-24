@@ -3,6 +3,7 @@ using System;
 using Terraria;
 using Terraria.WorldBuilding;
 using TerrariaApi.Server;
+using TShockAPI;
 
 namespace SeededDrunkWorld
 {
@@ -14,9 +15,7 @@ namespace SeededDrunkWorld
         public override string Author => "gigabarn";
         public override Version Version => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-        public SeededDrunkWorldPlugin(Main game) : base(game)
-        {
-        }
+        public SeededDrunkWorldPlugin(Main game) : base(game) { }
 
         public override void Initialize()
         {
@@ -24,8 +23,9 @@ namespace SeededDrunkWorld
             {
                 if (Terraria.WorldGen.WorldGenParam_Evil < 0)
                 {
-                    Console.WriteLine("Random world evil was selected; a seeded drunk world will be generated");
-                    Terraria.WorldGen.drunkWorldGen = true;
+                    TShock.Log.Info("Generating drunk world with seed: {0}", Terraria.WorldGen.currentWorldSeed);
+                    WorldGen.drunkWorldGen = true;
+                    Main.drunkWorld = true;
                 }
             };
         }
