@@ -1,0 +1,53 @@
+name: Build for release
+
+on:
+  push:
+    tags:
+      - v*-release
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Build plugin DLL
+      run: msbuild SeededDrunkWorld/SeededDrunkWorld.csproj /property:Configuration=Release
+
+    - name: Copy DLLs
+      run: |
+        md dlls
+        copy SeededDrunkWorld/bin/Release/*.dll dlls
+        del dlls/TShockAPI.dll
+        del dlls/OTAPI.dll
+
+    - name: Create artifact ZIP
+      uses: papeloto/action-zip@v1
+      with:
+        files: dlls
+        dest: release.zip
+
+    - name: Create release
+      uses: actions/create-release@v1.1.1
+      id: rel
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        draft: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1.0.2
+      with:
+        upload_url: ${{ steps.rel.outputs.upload_url }}
+        asset_name: ${{ github.repository }}.zip
+        asset_path: release.zip
+        asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
